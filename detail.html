@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>学生详细信息</title>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+<ul id="detailInfo">
+    <!--
+      <li><span class="w100">编号：</span><span class="w20">1</span></li>
+      <li><span class="w100">姓名：</span><span class="w200">xx</span></li>
+      <li><span class="w100">性别：</span><span class="w200">xx</span></li>
+      <li><span class="w100">分数：</span><span class="w200">66</span></li>
+      -->
+</ul>
+<script charset="UTF-8" type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<script charset="UTF-8" type="text/javascript">
+    //解析传进来的URL
+    String.prototype.queryURLParameter = function () {
+        var reg = /([^?#&=]+)=([^?#&=]+)/g,
+            obj = {};
+        this.replace(reg, function () {
+            var key = arguments[1],
+                value = arguments[2];
+            obj[key] = value;
+
+        });
+        return obj;
+    };
+
+    var detailInfo = document.getElementById("detailInfo"),
+        urlObj = window.location.href.queryURLParameter(),
+        studentId = urlObj["id"];
+
+
+    //发送请求
+    $.ajax({
+        url: "/getDetail?id=" + studentId,
+        success: function (jsonData) {
+            if (jsonData&&jsonData["code"]==0){
+                var data = jsonData["data"];
+                bindHtml(data);
+            }
+
+        }
+
+    });
+    //数据绑定
+    function bindHtml(data) {
+        var str = '';
+        str += '<li><span class="w100">编号：</span><span class="w20">' + data["id"] + '</span></li>';
+        str += '<li><span class="w100">姓名：</span><span class="w200">' + data["name"] + '</span></li>';
+        str += '<li><span class="w100">性别：</span><span class="w200">' + (data["sex"]===0?"男":"女") + '</span></li>';
+        str += '<li><span class="w100">分数：</span><span class="w200">' + data["score"] + '</span></li>';
+
+        detailInfo.innerHTML = str;
+    }
+
+
+</script>
+
+</body>
+</html>
